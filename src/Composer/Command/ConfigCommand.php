@@ -401,6 +401,7 @@ EOT
                     return $val === 'null' ? null : $val;
                 },
             ),
+            'git-clone-depth' => array('is_numeric', 'intval'),
             'github-expose-hostname' => array($booleanValidator, $booleanNormalizer),
         );
         $multiConfigValues = array(

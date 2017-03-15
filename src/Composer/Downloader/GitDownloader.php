@@ -62,7 +62,14 @@ class GitDownloader extends VcsDownloader implements DvcsDownloaderInterface
             } catch (\RuntimeException $e) {
             }
         }
-        $command = 'git clone --no-checkout %s %s '.$cacheOptions.'&& cd '.$flag.'%2$s && git remote add composer %1$s && git fetch composer';
+
+        $cloneDepth = '';
+        if ($this->config->get('git-clone-depth') !== -1) {
+            $cloneDepth = '--depth '.$this->config->get('git-clone-depth');
+        }
+        $command = '(git clone --no-checkout '.$cloneDepth.' --single-branch %s %s --branch %s || git clone --no-checkout %1$s %2$s)'.
+            ' && cd '.$flag.'%2$s && git remote add composer %1$s && (git fetch composer %3$s || git fetch composer)';
+
         $this->io->writeError($msg);
 
         $commandCallable = function ($url) use ($ref, $path, $command) {
